@@ -17,6 +17,7 @@ namespace BoletoNetCore
             [084] = BancoUniprimeNortePR.Instance,
             [085] = BancoCecred.Instance,
             [104] = BancoCaixa.Instance,
+            [136] = BancoUnicred.Instance,
             [237] = BancoBradesco.Instance,
             [341] = BancoItau.Instance,
             [422] = BancoSafra.Instance,

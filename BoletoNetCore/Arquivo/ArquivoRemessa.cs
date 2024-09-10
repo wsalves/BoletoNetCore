@@ -11,7 +11,7 @@ namespace BoletoNetCore
         public int NumeroArquivoRemessa { get; set; }
         public int? NumeroArquivoRemessaNoDia { get; set; }
 
-        public string NomeArquivo => Banco?.FormatarNomeArquivoRemessa(NumeroArquivoRemessaNoDia ?? NumeroArquivoRemessa); //
+        public string NomeArquivo => Banco?.FormatarNomeArquivoRemessa(TipoArquivo, Banco, NumeroArquivoRemessaNoDia ?? NumeroArquivoRemessa); //
 
         public ArquivoRemessa(IBanco banco, TipoArquivo tipoArquivo, int numeroArquivoRemessa, int? numeroArquivoRemessaNoDia = null)
         {

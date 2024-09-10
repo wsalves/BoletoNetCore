@@ -9,6 +9,7 @@ namespace BoletoNetCore
         UniprimeNortePR = 084,
         Cecred = 085,
         Caixa = 104,
+        Unicred = 136,
         Bradesco = 237,
         Itau = 341,
         Safra = 422,

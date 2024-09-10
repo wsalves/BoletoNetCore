@@ -35,9 +35,9 @@ namespace BoletoNetCore
             carteira.FormataNossoNumero(boleto);
         }
 
-        public virtual string FormatarNomeArquivoRemessa(int numeroSequencial)
+        public virtual string FormatarNomeArquivoRemessa(TipoArquivo TipoArquivo, IBanco Banco, int numeroSequencial)
         {
-            return string.Empty;
+            return $"CB{DateTime.Now.Date.Day:00}{DateTime.Now.Date.Month:00}{numeroSequencial.ToString().PadLeft(9, '0').PadRight(2)}.rem";
         }
 
         public virtual string GerarDetalheRemessa(TipoArquivo tipoArquivo, Boleto boleto, ref int numeroRegistro)

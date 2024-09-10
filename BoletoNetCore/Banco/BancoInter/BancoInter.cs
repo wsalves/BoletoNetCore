@@ -26,7 +26,7 @@ namespace BoletoNetCore
 
         }
 
-        public override string FormatarNomeArquivoRemessa(int numeroSequencial)
+        public override string FormatarNomeArquivoRemessa(TipoArquivo TipoArquivo, IBanco Banco, int numeroSequencial)
         {
             return $"CI400_001_{numeroSequencial.ToString("D7")}.REM";
         }

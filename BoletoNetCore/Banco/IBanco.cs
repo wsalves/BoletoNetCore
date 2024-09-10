@@ -72,7 +72,7 @@ namespace BoletoNetCore
                                             int numeroRegistroCobrancaCaucionada, decimal valorCobrancaCaucionada,
                                             int numeroRegistroCobrancaDescontada, decimal valorCobrancaDescontada);
 
-        string FormatarNomeArquivoRemessa(int numeroSequencial);
+        string FormatarNomeArquivoRemessa(TipoArquivo TipoArquivo, IBanco Banco, int numeroSequencial);
     }
 
     /// <summary>

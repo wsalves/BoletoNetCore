@@ -29,7 +29,7 @@ namespace BoletoNetCore
             Beneficiario.CodigoFormatado = $"{contaBancaria.Agencia} / {contaBancaria.Conta}-{contaBancaria.DigitoConta}";
         }
 
-        public override string FormatarNomeArquivoRemessa(int numeroSequencial)
+        public override string FormatarNomeArquivoRemessa(TipoArquivo TipoArquivo, IBanco Banco, int numeroSequencial)
         {
             return $"{DateTime.Now.ToString("ddMMyy")}{numeroSequencial.ToString().PadLeft(9, '0').Right(2)}.rem"; ;
         }

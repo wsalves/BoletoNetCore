@@ -91,7 +91,7 @@ namespace BoletoNetCore.Testes
                 Pagador = GerarPagador(),
                 DataEmissao = DateTime.Now.AddDays(-1),//.AddDays(-3),
                 DataProcessamento = DateTime.Now,
-                DataVencimento = DateTime.Now.AddDays(-1),//.AddMonths(i),
+                DataVencimento = DateTime.Now.AddDays(i),//.AddMonths(i),
                 ValorTitulo = (decimal)100 * i,
                 NossoNumero = NossoNumeroInicial == 0 ? "" : (NossoNumeroInicial + _proximoNossoNumero).ToString(),
                 NumeroDocumento = "BB" + _proximoNossoNumero.ToString("D6") + (char)(64 + i),
@@ -99,21 +99,21 @@ namespace BoletoNetCore.Testes
                 Aceite = aceite,
                 CodigoInstrucao1 = "11",
                 CodigoInstrucao2 = "22",
-                //DataDesconto = DateTime.Now.AddMonths(i),
-                //ValorDesconto = (decimal)(100 * i * 0.10),
+                DataDesconto = DateTime.Now,
+                ValorDesconto = (decimal)(100 * i * 0.10),
                 //DataDesconto2 = DateTime.Now.AddMonths(i).AddDays(2),
                 //ValorDesconto2 = (decimal)(100 * i * 0.12),
                 //DataDesconto3 = DateTime.Now.AddMonths(i).AddDays(3),
                 //ValorDesconto3 = (decimal)(100 * i * 0.13),
-                DataMulta = DateTime.Now,//.AddMonths(i),
+                DataMulta = DateTime.Now.AddMonths(i),
                 PercentualMulta = (decimal)2.00,
                 ValorMulta = (decimal)(100 * i * (2.00 / 100)),
-                DataJuros = DateTime.Now,//.AddMonths(i),
+                DataJuros = DateTime.Now.AddMonths(i),
                 PercentualJurosDia = (decimal)0.2,
                 ValorJurosDia = (decimal)(100 * i * (0.2 / 100)),
                 AvisoDebitoAutomaticoContaCorrente = "2",
                 MensagemArquivoRemessa = "Mensagem para o arquivo remessa",
-                NumeroControleParticipante = "CHAVEPRIMARIA" + _proximoNossoNumero,
+                NumeroControleParticipante = "PK-" + _proximoNossoNumero,
                 ParcelaInformativo = informativoParcelas,
                 ImprimirValoresAuxiliares = true
             };
@@ -162,35 +162,26 @@ namespace BoletoNetCore.Testes
             var boletos = GerarBoletos(banco, quantidadeBoletos, aceite, NossoNumeroInicial);
             Assert.AreEqual(quantidadeBoletos, boletos.Count, "Quantidade de boletos diferente de " + quantidadeBoletos);
 
-            // Define os nomes dos arquivos, cria pasta e apaga arquivos anteriores
-            var nomeArquivoREM = Path.Combine(Path.GetTempPath(), "BoletoNetCore", $"{nomeCarteira}_{tipoArquivo}.REM");
-            var nomeArquivoPDF = Path.Combine(Path.GetTempPath(), "BoletoNetCore", $"{nomeCarteira}_{tipoArquivo}.PDF");
-            var nomeArquivoHTML = Path.Combine(Path.GetTempPath(), "BoletoNetCore", $"{nomeCarteira}_{tipoArquivo}.html");
-            if (!Directory.Exists(Path.GetDirectoryName(nomeArquivoREM)))
-                Directory.CreateDirectory(Path.GetDirectoryName(nomeArquivoREM));
-            if (File.Exists(nomeArquivoREM))
-            {
-                File.Delete(nomeArquivoREM);
-                if (File.Exists(nomeArquivoREM))
-                    Assert.Fail("Arquivo Remessa não foi excluído: " + nomeArquivoREM);
-            }
-            if (File.Exists(nomeArquivoPDF))
-            {
-                File.Delete(nomeArquivoPDF);
-                if (File.Exists(nomeArquivoPDF))
-                    Assert.Fail("Arquivo Boletos (PDF) não foi excluído: " + nomeArquivoPDF);
-            }
-            if (File.Exists(nomeArquivoHTML))
-            {
-                File.Delete(nomeArquivoHTML);
-                if (File.Exists(nomeArquivoHTML))
-                    Assert.Fail("Arquivo Boletos (HTML) não foi excluído: " + nomeArquivoHTML);
-            }
-
             // Arquivo Remessa.
+            string nomeArquivoREM = null;
+            string filenameSemExt = null;
             try
             {
                 var arquivoRemessa = new ArquivoRemessa(boletos.Banco, tipoArquivo, 1);
+                nomeArquivoREM = Path.Combine(Path.GetTempPath(), "BoletoNetCore", arquivoRemessa.NomeArquivo);
+                
+                filenameSemExt = Path.GetFileNameWithoutExtension(arquivoRemessa.NomeArquivo);
+                
+                if (!Directory.Exists(Path.GetDirectoryName(nomeArquivoREM)))
+                    Directory.CreateDirectory(Path.GetDirectoryName(nomeArquivoREM));
+                
+                if (File.Exists(nomeArquivoREM))
+                {
+                    File.Delete(nomeArquivoREM);
+                    if (File.Exists(nomeArquivoREM))
+                        Assert.Fail("Arquivo Remessa não foi excluído: " + nomeArquivoREM);
+                }
+
                 using (var fileStream = new FileStream(nomeArquivoREM, FileMode.Create))
                     arquivoRemessa.GerarArquivoRemessa(boletos, fileStream);
                 if (!File.Exists(nomeArquivoREM))
@@ -202,6 +193,26 @@ namespace BoletoNetCore.Testes
                     File.Delete(nomeArquivoREM);
                 Assert.Fail(e.InnerException.ToString());
             }
+
+            string nomeArquivoPDF = Path.Combine(Path.GetTempPath(), "BoletoNetCore", $"{filenameSemExt}.pdf");
+            if (File.Exists(nomeArquivoPDF))
+            {
+                File.Delete(nomeArquivoPDF);
+                if (File.Exists(nomeArquivoPDF))
+                    Assert.Fail("Arquivo Boletos (PDF) não foi excluído: " + nomeArquivoPDF);
+            }
+
+
+
+            string nomeArquivoHTML = Path.Combine(Path.GetTempPath(), "BoletoNetCore", $"{filenameSemExt}.html");
+            // Define os nomes dos arquivos, cria pasta e apaga arquivos anteriores
+            if (File.Exists(nomeArquivoHTML))
+            {
+                File.Delete(nomeArquivoHTML);
+                if (File.Exists(nomeArquivoHTML))
+                    Assert.Fail("Arquivo Boletos (HTML) não foi excluído: " + nomeArquivoHTML);
+            }
+
 
             if (gerarBoletoPdfHtml)
             {
@@ -219,8 +230,10 @@ namespace BoletoNetCore.Testes
                             OcultarInstrucoes = false,
                             MostrarComprovanteEntrega = false,
                             MostrarEnderecoBeneficiario = true,
-                            ExibirDemonstrativo = true
+                            ExibirDemonstrativo = false
                         };
+
+                        
 
                         html.Append("<div style=\"page-break-after: always;\">");
                         html.Append(boletoParaImpressao.MontaHtmlEmbedded());
@@ -229,6 +242,9 @@ namespace BoletoNetCore.Testes
                         File.WriteAllText(nomeArquivoHTML, boletoHtml);
 
                         var pdf = new Wkhtmltopdf.NetCore.HtmlAsPdf().GetPDF(boletoHtml);
+
+
+                        
                         using (var fs = new FileStream(nomeArquivoPDF, FileMode.Create))
                             fs.Write( pdf, 0, pdf.Length);
                         if (!File.Exists(nomeArquivoPDF))

@@ -36,11 +36,7 @@ namespace BoletoNetCore
             }
         }
 
-        public override string FormatarNomeArquivoRemessa(int numeroSequencial)
-        {
-            return "";
-        }
-
+        
         public string GerarMensagemRemessa(TipoArquivo tipoArquivo, Boleto boleto, ref int numeroRegistro)
         {
             return null;

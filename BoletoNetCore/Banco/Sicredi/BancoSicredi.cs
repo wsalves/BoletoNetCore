@@ -27,7 +27,7 @@ namespace BoletoNetCore
             Beneficiario.CodigoFormatado = $"{contaBancaria.Agencia}.{contaBancaria.OperacaoConta}.{Beneficiario.Codigo}";
         }
 
-        public override string FormatarNomeArquivoRemessa(int sequencial)
+        public override string FormatarNomeArquivoRemessa(TipoArquivo TipoArquivo, IBanco Banco, int sequencial)
         {
             var agora = DateTime.Now;
 
